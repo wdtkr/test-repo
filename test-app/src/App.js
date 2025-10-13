@@ -1,104 +1,177 @@
-import React, { useState, useCallback } from "react";
-import { Lock, Unlock, CheckCircle, XCircle } from "lucide-react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
+import { Lock, Unlock, CheckCircle, XCircle, Gift, Info } from "lucide-react";
 
 // スケジュールデータと謎解きを定義するJSON構造
-// ここを編集することで、予定内容と謎解きを変更・追加できます。
+// plan: 短いタイトル, detail: 詳しい説明 (WIPで追加), riddle: 謎, answer: 答え, hint: ヒント
 const scheduleData = {
   Day1: [
     {
-      time: "10:00 - 12:00",
-      plan: "サプライズランチ＆プレゼント！",
-      riddle: "愛を込めて、彼女が一番好きな動物の名前をカタカナで答えてね。",
-      answer: "ネコ",
-      hint: "ヒント：私たちが一緒に飼いたいと思っている動物です。",
+      time: "12:00 ~ ",
+      plan: "家を出る",
+      detail: "WIP", // 詳細情報がここに入ります
+      riddle: "Q1",
+      answer: "Answer",
+      hint: "ヒント：Hint",
     },
     {
-      time: "14:00 - 16:30",
-      plan: "二人だけの秘密のアフタヌーンティー",
-      riddle: "私たちの出会いの季節を漢字一文字で答えてね。",
-      answer: "秋",
-      hint: "ヒント：寒い季節と暑い季節の間にあります。",
+      time: "18:00 ~ ",
+      plan: "三井ガーデンホテル豊洲にチェックイン",
+      detail: "WIP",
+      riddle: "Q2",
+      answer: "Answer",
+      hint: "ヒント：Hint",
     },
     {
-      time: "18:30 - 21:00",
-      plan: "夜景の見える特別なディナー",
-      riddle:
-        "私たちが初めてデートした場所の名前をひらがなで答えてね。（例：〇〇えん）",
-      answer: "こうえん",
-      hint: "ヒント：大きな木とベンチがある場所です。",
+      time: "19:00 ~ ",
+      plan: "36階のレストランでディナー！",
+      detail: "WIP",
+      riddle: "Q3",
+      answer: "Answer",
+      hint: "ヒント：Hint",
+    },
+    {
+      time: "21:00 ~ ",
+      plan: "夜景を見ながらお酒を嗜もう！",
+      detail: "WIP",
+      riddle: "Q4",
+      answer: "Answer",
+      hint: "ヒント：Hint",
+    },
+    {
+      time: "23:00 ~ ",
+      plan: "WIP",
+      detail: "WIP",
+      riddle: "Q5",
+      answer: "Answer",
+      hint: "ヒント：Hint",
     },
   ],
   Day2: [
     {
-      time: "10:30 - 12:00",
-      plan: "思い出の場所へドライブデート",
-      riddle: "私が彼女に最初に贈った花の名前をひらがなで答えてね。",
-      answer: "バラ",
-      hint: "ヒント：赤くてロマンチックな花です。",
+      time: "~ 9:30",
+      plan: "ホテルで朝食ビュッフェを食べるよ！",
+      detail: "WIP",
+      riddle: "テスト",
+      answer: "Answer",
+      hint: "ヒント：",
     },
     {
-      time: "13:00 - 15:00",
-      plan: "手作り体験でペアグッズ作り",
-      riddle: "私たちが初めて旅行に行った都道府県名をひらがなで答えてね。",
-      answer: "おきなわ",
-      hint: "ヒント：海がとてもきれいな南の島です。",
+      time: "~ 11:00",
+      plan: "チェックアウトしよう！",
+      detail: "WIP",
+      riddle: "テスト",
+      answer: "Answer",
+      hint: "ヒント：",
     },
     {
-      time: "17:00 - 19:30",
-      plan: "まったりおうちで映画鑑賞＆ケーキ",
-      riddle: "このアプリを作った人の誕生日月を数字2桁で答えてね。",
-      answer: "10",
-      hint: "ヒント：私が生まれた月です。",
+      time: "13:00 ~ 13:30",
+      plan: "チームラボに行くよ！！",
+      detail: "WIP",
+      riddle: "テスト",
+      answer: "Answer",
+      hint: "ヒント：",
     },
   ],
 };
 
-// モーダルコンポーネント
-const RiddleModal = ({ isOpen, onClose, scheduleItem, onSolve }) => {
+// アイコンの標準サイズを定義 (Tailwind CSS のクラスを使用)
+const ICON_SIZE = "w-6 h-6";
+const SMALL_ICON_SIZE = "w-5 h-5";
+
+// 詳細予定モーダルコンポーネント
+const DetailModal = ({ isOpen, onClose, scheduleItem }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 transition-opacity duration-300"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-lg transform transition-all duration-300 scale-100 border-4 border-pink-400"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 className="text-xl font-black mb-4 text-pink-600 flex items-center border-b pb-2">
+          {/* ここを ICON_SIZE に固定 */}
+          <Gift className={`${ICON_SIZE} mr-2 text-pink-500 flex-shrink-0`} />
+          {scheduleItem.plan}
+        </h3>
+        <p className="text-sm text-gray-500 mb-4">時間: {scheduleItem.time}</p>
+
+        <p className="text-gray-700 font-medium whitespace-pre-wrap leading-relaxed">
+          {scheduleItem.detail}
+        </p>
+        <button
+          onClick={onClose}
+          className="w-full mt-6 bg-pink-500 text-white font-bold py-3 rounded-xl hover:bg-pink-600 transition-all duration-200 shadow-lg"
+        >
+          閉じる
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// 謎解きモーダルコンポーネント
+const RiddleModal = ({
+  isOpen,
+  onClose,
+  scheduleItem,
+  onSolveAndOpenDetail,
+}) => {
   const [answerInput, setAnswerInput] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
 
+  // モーダルが開いたときにステートをリセット
+  useEffect(() => {
+    if (isOpen) {
+      setAnswerInput("");
+      setMessage("");
+      setIsError(false);
+    }
+  }, [isOpen]);
+
   // 答えの検証ロジック
   const checkAnswer = () => {
-    // 全角・半角、大文字・小文字を無視して比較
-    const normalizedInput = answerInput.toLowerCase().trim();
-    const normalizedCorrectAnswer = scheduleItem.answer.toLowerCase().trim();
+    // 全角・半角、大文字・小文字、スペースを無視して比較
+    const normalizedInput = answerInput.toLowerCase().replace(/\s/g, "").trim();
+    const normalizedCorrectAnswer = scheduleItem.answer
+      .toLowerCase()
+      .replace(/\s/g, "")
+      .trim();
 
     if (normalizedInput === normalizedCorrectAnswer) {
-      setMessage("正解です！次の予定がアンロックされました！");
+      setMessage("🎊正解です！次の予定がアンロックされました！🎊");
       setIsError(false);
+
+      // 成功時は親のコールバックを呼び出し、謎解きモーダルを閉じ、詳細モーダルを開かせる
       setTimeout(() => {
-        onSolve(); // 予定を公開するコールバック
-        // 成功時は親の onClose が呼ばれ、モーダルが閉じ、ステートがリセットされる
-        onClose();
+        onSolveAndOpenDetail();
       }, 1500);
     } else {
       setMessage("残念、答えが違います。ヒントをよく見て考えてみてね！");
       setIsError(true);
       setTimeout(() => {
         setMessage("");
-        setAnswerInput("");
       }, 3000);
     }
   };
-
-  // モーダルが閉じるときに、次の開封のために内部ステートをリセットする処理
-  // 今回は親の onClose には含まれていないが、ここで明示的にリセットする関数を渡すことも可能
 
   if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 transition-opacity duration-300"
       onClick={onClose}
     >
       <div
         className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-sm transform transition-all duration-300 scale-100 border-4 border-pink-400"
-        onClick={(e) => e.stopPropagation()} // モーダル外のクリックで閉じないようにする
+        onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-xl font-bold mb-4 text-pink-600 flex items-center">
-          <Lock className="w-6 h-6 mr-2" /> 謎解きチャレンジ！
+          <Lock className={`${ICON_SIZE} mr-2 flex-shrink-0`} />{" "}
+          謎解きチャレンジ！
         </h3>
         <p className="mb-4 text-gray-700 font-medium whitespace-pre-wrap">
           {scheduleItem.riddle}
@@ -139,9 +212,11 @@ const RiddleModal = ({ isOpen, onClose, scheduleItem, onSolve }) => {
             }`}
           >
             {isError ? (
-              <XCircle className="w-5 h-5 mr-2" />
+              <XCircle className={`${SMALL_ICON_SIZE} mr-2 flex-shrink-0`} />
             ) : (
-              <CheckCircle className="w-5 h-5 mr-2" />
+              <CheckCircle
+                className={`${SMALL_ICON_SIZE} mr-2 flex-shrink-0`}
+              />
             )}
             <span className="font-semibold">{message}</span>
           </div>
@@ -149,7 +224,7 @@ const RiddleModal = ({ isOpen, onClose, scheduleItem, onSolve }) => {
 
         <button
           onClick={onClose}
-          className="w-full text-sm text-gray-500 mt-2 hover:text-gray-700 transition-colors"
+          className="w-full text-sm text-gray-500 mt-4 hover:text-gray-700 transition-colors"
         >
           閉じる
         </button>
@@ -159,33 +234,93 @@ const RiddleModal = ({ isOpen, onClose, scheduleItem, onSolve }) => {
 };
 
 // スケジュールテーブル行コンポーネント
-const ScheduleRow = ({ item, isRevealed, onOpenRiddle }) => {
+const ScheduleRow = ({
+  item,
+  isRevealed,
+  onOpenRiddle,
+  onOpenDetail,
+  onSolveDirectly,
+}) => {
+  const pressTimeout = useRef(null); // 長押し用のタイマーを保持
+
+  // 長押し開始 (2000ms後に直接アンロック)
+  const handlePressStart = () => {
+    // すでにアンロックされている場合は動作させない
+    if (isRevealed) return;
+
+    // 2000ms (2秒) に設定
+    pressTimeout.current = setTimeout(() => {
+      onSolveDirectly(item); // 直接アンロック (謎を解いたことにする)
+    }, 2000);
+  };
+
+  // 長押し終了/キャンセル
+  const handlePressEnd = () => {
+    clearTimeout(pressTimeout.current);
+    // 長押しを完了したときのみ onSolveDirectly が実行される
+  };
+
+  // 通常の行クリック (謎解きモーダルまたは詳細モーダルを開く)
+  const handleRowClick = (e) => {
+    // 長押し中はクリックイベントも発生するため、長押しでないことを確認するために e.detail を使用
+    // PCではクリック回数、スマホでは通常タップ（e.detail=1）を判別する
+    if (e.detail === 1) {
+      if (isRevealed) {
+        onOpenDetail(item); // 詳細モーダルを開く
+      } else {
+        onOpenRiddle(item); // 謎解きモーダルを開く
+      }
+    }
+  };
+
   return (
     <div className="flex border-b border-pink-200 last:border-b-0">
-      {/* 時間列 */}
-      <div className="w-1/3 p-3 bg-pink-100 font-semibold text-pink-700 flex items-center justify-center border-r border-pink-200">
-        {item.time}
+      {/* 時間列 (長押しでスキップ) */}
+      <div
+        className={`w-1/3 p-3 font-semibold flex flex-col items-center justify-center border-r border-pink-200 relative select-none transition-colors ${
+          isRevealed
+            ? "bg-pink-100 text-pink-700"
+            : "bg-pink-100 text-pink-700 cursor-pointer hover:bg-pink-200" // ロック時は少し濃い色でスキップ可能をアピール
+        }`}
+        // PC/Touchイベントを設定
+        onMouseDown={handlePressStart}
+        onMouseUp={handlePressEnd}
+        onTouchStart={handlePressStart}
+        onTouchEnd={handlePressEnd}
+        onMouseLeave={handlePressEnd} // マウスがエリアを離れた場合もリセット
+      >
+        <span className="text-lg">{item.time}</span>
+        {!isRevealed && (
+          <span className="text-[10px] text-red-600 font-bold mt-1 animate-pulse">
+            2秒長押しでスキップ！
+          </span>
+        )}
       </div>
 
-      {/* 予定内容列 (謎解きエリア) */}
+      {/* 予定内容列 (謎解きエリア/詳細表示エリア) */}
+      {/* ここで onClick を定義することで、時間列でのクリックと競合しないようにする */}
       <div
-        className={`w-2/3 p-3 flex items-center transition-all duration-500 ease-in-out ${
+        className={`w-2/3 p-3 flex items-center transition-all duration-300 ease-in-out cursor-pointer ${
           isRevealed
-            ? "bg-white"
-            : "bg-pink-300 cursor-pointer hover:bg-pink-400 active:bg-pink-500"
+            ? "bg-white hover:bg-pink-50" // アンロック済み
+            : "bg-pink-300 hover:bg-pink-400 active:bg-pink-500" // ロック中
         }`}
-        onClick={() => !isRevealed && onOpenRiddle(item)}
+        onClick={handleRowClick}
       >
         {isRevealed ? (
-          // 答えが分かっている場合
+          // 答えが分かっている場合 (タイトル表示 + 詳細モーダルを開く)
           <div className="text-gray-800 font-medium flex items-center">
-            <Unlock className="w-5 h-5 mr-2 text-green-600" />
-            <span className="font-bold text-lg">{item.plan}</span>
+            <Unlock
+              className={`${SMALL_ICON_SIZE} mr-2 text-green-600 flex-shrink-0`}
+            />
+            <span className="font-extrabold text-md text-pink-800">
+              {item.plan}
+            </span>
           </div>
         ) : (
           // 謎解きが必要な場合
-          <div className="text-white font-bold text-lg flex items-center justify-center w-full">
-            <Lock className="w-6 h-6 mr-2" />
+          <div className="text-white font-bold text-md flex items-center justify-center w-full py-2">
+            <Lock className={`${ICON_SIZE} mr-2 flex-shrink-0`} />
             タップして謎解きへ！
           </div>
         )}
@@ -196,39 +331,85 @@ const ScheduleRow = ({ item, isRevealed, onOpenRiddle }) => {
 
 // メインアプリケーションコンポーネント
 export default function App() {
-  // const appId = typeof __app_id !== "undefined" ? __app_id : "default-app-id";
-
   // State for the selected day ('Day1' or 'Day2')
   const [selectedDay, setSelectedDay] = useState("Day1");
 
   // State to track which plans have been revealed (DayN: [index, ...])
-  // NOTE: Firestoreは今回は使用せず、シンプルなアプリとしてuseStateで状態管理します。
   const [revealedPlans, setRevealedPlans] = useState({
-    Day1: [], // Day1のアンロックされたインデックス
-    Day2: [], // Day2のアンロックされたインデックス
+    Day1: [],
+    Day2: [],
   });
 
   // Modal states
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentRiddle, setCurrentRiddle] = useState(null); // { day: 'Day1', index: 0, item: {...} }
+  const [isRiddleModalOpen, setIsRiddleModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+  // Riddle/Detail Modalで使用する、現在選択されているアイテム
+  const [currentRiddleItem, setCurrentRiddleItem] = useState(null); // { day: 'Day1', index: 0, item: {...} }
 
   // 謎解きモーダルを開く処理
-  const handleOpenRiddle = (item, index) => {
-    setCurrentRiddle({ day: selectedDay, index: index, item: item });
-    setIsModalOpen(true);
+  const handleOpenRiddle = (item) => {
+    // 現在選択されているDayとIndexを設定
+    const index = scheduleData[selectedDay].findIndex(
+      (i) => i.time === item.time && i.plan === item.plan
+    );
+    setCurrentRiddleItem({ day: selectedDay, index: index, item: item });
+    setIsRiddleModalOpen(true);
   };
 
-  // 謎解きが解けた時の処理
-  const handleSolveRiddle = useCallback(() => {
-    if (currentRiddle) {
+  // 詳細モーダルを開く処理 (アンロック済み行クリック用)
+  const handleOpenDetail = (item) => {
+    setCurrentRiddleItem({ item: item });
+    setIsDetailModalOpen(true);
+  };
+
+  // 謎解きが解けた時の処理 (RiddleModalから呼ばれる)
+  const handleSolveAndOpenDetail = useCallback(() => {
+    if (currentRiddleItem) {
+      // 1. アンロック状態を更新
       setRevealedPlans((prev) => ({
         ...prev,
-        [currentRiddle.day]: [...prev[currentRiddle.day], currentRiddle.index],
+        [currentRiddleItem.day]: [
+          ...prev[currentRiddleItem.day],
+          currentRiddleItem.index,
+        ],
       }));
+
+      // 2. 謎解きモーダルを閉じる
+      setIsRiddleModalOpen(false);
+
+      // 3. 詳細モーダルを開く
+      setIsDetailModalOpen(true);
     }
-  }, [currentRiddle]);
+  }, [currentRiddleItem]);
+
+  // 長押しで直接アンロックする処理 (自動で詳細モーダルを開かない)
+  const handleSolveDirectly = useCallback(
+    (itemToSolve) => {
+      const index = scheduleData[selectedDay].findIndex(
+        (i) => i.time === itemToSolve.time && i.plan === itemToSolve.plan
+      );
+
+      if (index !== -1 && !revealedPlans[selectedDay].includes(index)) {
+        // 1. アンロック状態を更新
+        setRevealedPlans((prev) => ({
+          ...prev,
+          [selectedDay]: [...prev[selectedDay], index],
+        }));
+
+        // 2. 詳細モーダルは開かない（ユーザーがタップするのを待つ）
+      }
+    },
+    [selectedDay, revealedPlans]
+  );
 
   const schedule = scheduleData[selectedDay];
+
+  // Dayごとの概要情報
+  const daySummaries = {
+    Day1: "1日目はゆったり、大人な雰囲気！ちょっとオシャレなところに行くから、服装はカジュアルすぎないように注意！",
+    Day2: "2日目は色んなところにお出かけ！出来るだけ歩きやすい靴を履いて、短いスカートは避けた方が良いよ！",
+  };
 
   return (
     <div className="min-h-screen bg-pink-50 font-sans p-4 flex flex-col items-center">
@@ -238,28 +419,26 @@ export default function App() {
         rel="stylesheet"
       />
 
-      {/* GitHub Pagesで検索エンジンからのインデックス登録を防ぐための設定 */}
       <meta name="robots" content="noindex" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
       <style>{`
         body { font-family: 'Inter', sans-serif; }
-        /* モバイルフレンドリーなレイアウト */
         .schedule-container {
             width: 100%;
             max-width: 600px;
         }
-        /* Tailwind CSSのコンフィグ（font-familyなどを設定） */
-        /* Lucide icons are used for visual appeal */
       `}</style>
 
       {/* ヘッダー */}
       <header className="w-full max-w-md text-center py-6">
-        <h1 className="text-3xl font-black text-pink-700 mb-1">
+        <h1 className="text-3xl font-black text-pink-700 mb-1 animate-pulse">
           💖 Happy Birthday! 💖
         </h1>
-        <p className="text-lg text-gray-600 font-semibold">
-          特別な2日間スケジュール
+        <p className="text-md text-gray-600 font-semibold mt-4">
+          2日間のスケジュールを知りたい？？
+          <br />
+          知りたいなら、謎が解けたら教えてあげる！
         </p>
       </header>
 
@@ -287,13 +466,27 @@ export default function App() {
         </button>
       </div>
 
+      {/* 注意事項/ざっくり情報エリア (bg-whiteは残しつつ、縁を削除) */}
+      <div className="w-full max-w-md bg-white p-4 mb-6 rounded-2xl">
+        <h2 className="text-xl font-extrabold text-pink-700 flex items-center mb-2">
+          <Info className="w-5 h-5 mr-2 flex-shrink-0" />
+          {selectedDay} の 概要と注意点！
+        </h2>
+        <p className="text-sm text-gray-600 mt-3 whitespace-pre-wrap">
+          {daySummaries[selectedDay]}
+        </p>
+        <p className="text-xs text-gray-500 mt-3 font-medium border-t pt-4">
+          💡 テストテストテストテストテストテスト
+        </p>
+      </div>
+
       {/* スケジュール表示エリア */}
       <main className="schedule-container bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-pink-300">
         {/* テーブルヘッダー */}
         <div className="flex bg-pink-600 text-white font-extrabold text-lg">
           <div className="w-1/3 p-4 text-center">時間</div>
           <div className="w-2/3 p-4 text-center border-l border-pink-400">
-            予定内容 (謎解きで公開！)
+            ドキドキ予定内容
           </div>
         </div>
 
@@ -304,26 +497,27 @@ export default function App() {
               key={index}
               item={item}
               isRevealed={revealedPlans[selectedDay].includes(index)}
-              onOpenRiddle={() => handleOpenRiddle(item, index)}
+              onOpenRiddle={() => handleOpenRiddle(item)} // ロック時
+              onOpenDetail={handleOpenDetail} // アンロック時
+              onSolveDirectly={handleSolveDirectly} // 長押し処理
             />
           ))}
         </div>
       </main>
 
-      <p className="mt-8 text-center text-sm text-gray-400">
-        アプリID:
-        {/* {appId} */}
-      </p>
-
       {/* 謎解きモーダル */}
       <RiddleModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          // 修正点: RiddleModal内のローカルなステートセッターを親から呼び出さないように削除しました
-        }}
-        scheduleItem={currentRiddle?.item || {}}
-        onSolve={handleSolveRiddle}
+        isOpen={isRiddleModalOpen}
+        onClose={() => setIsRiddleModalOpen(false)}
+        scheduleItem={currentRiddleItem?.item || {}}
+        onSolveAndOpenDetail={handleSolveAndOpenDetail}
+      />
+
+      {/* 詳細予定モーダル */}
+      <DetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        scheduleItem={currentRiddleItem?.item || {}}
       />
     </div>
   );
