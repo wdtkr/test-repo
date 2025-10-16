@@ -386,6 +386,9 @@ export default function App() {
     Day2: [],
   });
 
+  // ★ メッセージの開閉状態
+  const [isMessageExpanded, setIsMessageExpanded] = useState(false);
+
   // Modal states
   const [isRiddleModalOpen, setIsRiddleModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -467,17 +470,52 @@ export default function App() {
 
       {/* ★ デコレーション用カスタムスタイル */}
       <style>{`
-        body { font-family: 'Inter', sans-serif; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            /* Subtle background texture */
+            background-color: #fce7f3; /* pink-100 base */
+            background-image: radial-gradient(circle at top right, rgba(255, 192, 203, 0.3) 1px, transparent 0),
+                              radial-gradient(circle at bottom left, rgba(255, 192, 203, 0.3) 1px, transparent 0);
+            background-size: 20px 20px;
+        }
         .schedule-container {
             width: 100%;
             max-width: 600px;
+            /* Add more prominent soft shadow */
+            box-shadow: 0 20px 25px -5px rgba(236, 72, 153, 0.2), 0 10px 10px -5px rgba(236, 72, 153, 0.1);
         }
         .animate-sparkle {
+            /* Keep existing sparkle animation */
             animation: sparkle 1.5s ease-in-out infinite alternate;
         }
         @keyframes sparkle {
             0% { transform: scale(1); opacity: 0.8; }
             100% { transform: scale(1.05); opacity: 1; }
+        }
+        .animate-in {
+            animation-duration: 0.5s;
+        }
+        .fade-in {
+            animation-name: fadeIn;
+        }
+        .slide-in-from-top-4 {
+            animation-name: slideInFromTop;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInFromTop {
+            from { transform: translateY(-16px); }
+            to { transform: translateY(0); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0.5deg); }
+            50% { transform: translateY(20px) rotate(-0.5deg); }
+            100% { transform: translateY(0) rotate(0.5deg); }
         }
       `}</style>
 
@@ -489,10 +527,65 @@ export default function App() {
         <h1 className="text-3xl font-black mb-1 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-500 animate-sparkle">
           💖 Happy Birthday! 💖
         </h1>
+
+        {/* ★ 挿入された画像 */}
+        <img
+          src={"/top.jpg"}
+          alt="彼女"
+          className="w-full max-w-xs mx-auto my-4 rounded-2xl border-4 border-pink-500 shadow-2xl shadow-pink-400/50 transition-all duration-500 animate-float"
+        />
+
+        <br />
+        <div className="w-full max-w-sm mx-auto my-4">
+          <button
+            onClick={() => setIsMessageExpanded(!isMessageExpanded)}
+            className="w-full py-3 px-4 text-white font-bold rounded-xl transition-all duration-300 shadow-lg transform hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-r from-pink-500 to-red-500 flex items-center justify-center text-lg"
+          >
+            {isMessageExpanded
+              ? "💌 メッセージを閉じる"
+              : "💌 メッセージを読む"}
+          </button>
+
+          {isMessageExpanded && (
+            <div className="bg-white p-4 mt-3 rounded-xl shadow-xl border border-pink-200 text-gray-800 text-center transition-all duration-500 animate-in fade-in slide-in-from-top-4">
+              <p className="font-bold text-base whitespace-pre-wrap leading-relaxed">
+                ほのか、お誕生日おめでとう！🎉
+                <br />
+                付き合ってから10ヶ月弱も経ったんだね。
+                <br />
+                あっという間だったけど、
+                <br />
+                ほのかがいてくれたおかげで
+                <br />
+                本当に幸せだったよ。ありがとね。
+                <br />
+                <br />
+                出会ってからで考えると、
+                <br />
+                もう8年くらい経つのかな。すごいね。
+                <br />
+                でも、まだまだ一緒に居足りないし、
+                <br />
+                もっと色んなとこに2人で行きたいから、
+                <br />
+                これからもよろしくね。
+                <br />
+                生まれてきてくれて、一緒に居てくれて、
+                <br />
+                本当にありがとう。
+                <br />
+                <br />
+                大好きだよ！！！
+              </p>
+            </div>
+          )}
+        </div>
+        <br />
+        <br />
         <p className="text-lg text-gray-700 font-bold mt-4">
-          2日間のスケジュールを知りたい？？
+          ところで、2日間のスケジュール知りたい？
           <br />
-          謎が解けたら教えてあげる！
+          謎解きに成功したら教えてあげる！
         </p>
       </header>
 
@@ -529,13 +622,10 @@ export default function App() {
         <p className="text-sm text-gray-600 mt-3 whitespace-pre-wrap">
           {daySummaries[selectedDay]}
         </p>
-        <p className="text-xs text-gray-500 mt-3 font-medium border-t pt-4">
-          💡 テストテストテストテストテストテスト
-        </p>
       </div>
 
       {/* スケジュール表示エリア */}
-      <main className="schedule-container bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-pink-300">
+      <main className="schedule-container bg-white rounded-3xl overflow-hidden border-4 border-pink-300 ring-2 ring-pink-300 ring-offset-4 ring-offset-pink-50">
         {/* テーブルヘッダー */}
         <div className="flex bg-gradient-to-r from-pink-600 to-red-500 text-white font-extrabold text-lg">
           <div className="w-1/3 p-4 text-center">時間</div>
