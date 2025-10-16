@@ -206,7 +206,7 @@ const RiddleModal = ({
         {scheduleItem.image && (
           <div className="mb-4 rounded-xl overflow-hidden shadow-md">
             <img
-              src={`/${scheduleItem.image}`}
+              src={scheduleItem.image}
               alt="謎解きのヒント画像"
               className="w-full h-auto object-cover border-2 border-pink-100"
               onError={(e) => {
@@ -530,7 +530,7 @@ export default function App() {
 
         {/* ★ 挿入された画像 */}
         <img
-          src={"/top.jpg"}
+          src={"top.jpg"}
           alt="彼女"
           className="w-full max-w-xs mx-auto my-4 rounded-2xl border-4 border-pink-500 shadow-2xl shadow-pink-400/50 transition-all duration-500 animate-float"
         />
