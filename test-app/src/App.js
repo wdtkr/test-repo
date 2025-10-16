@@ -6,70 +6,99 @@ import { Lock, Unlock, CheckCircle, XCircle, Gift, Info } from "lucide-react";
 const scheduleData = {
   Day1: [
     {
+      time: "0:00 ~ ",
+      plan: "Happy Birthday ほのか！！！",
+      detail: "ケーキを食べたり、プレゼントを渡したりするよ！",
+      riddle: "た",
+      answer: "記憶",
+      hint: "ヒント：「た」が手前にあるなら・・・？",
+      image: "riddle4.png",
+    },
+    {
       time: "12:00 ~ ",
       plan: "家を出る",
-      detail: "WIP", // 詳細情報がここに入ります
-      riddle: "Q1",
-      answer: "Answer",
-      hint: "ヒント：Hint",
+      detail: "12時くらいに家を出るよ！次の目的地に向かってレッツゴー！",
+      riddle: "お花見",
+      answer: "ヒル",
+      hint: "ヒント：数字は漢字の何かを表しているよ。",
+      image: "riddle1.png",
     },
     {
       time: "18:00 ~ ",
       plan: "三井ガーデンホテル豊洲にチェックイン",
       detail: "WIP",
-      riddle: "Q2",
-      answer: "Answer",
-      hint: "ヒント：Hint",
+      riddle: "複雑な暗号",
+      answer: "CAT",
+      hint: "ヒント：一見複雑そうな図形だけど、よく見ると何かが合わさってる・・・！",
+      image: "riddle2.png",
     },
     {
       time: "19:00 ~ ",
       plan: "36階のレストランでディナー！",
-      detail: "WIP",
-      riddle: "Q3",
-      answer: "Answer",
-      hint: "ヒント：Hint",
+      detail:
+        "三井ガーデンホテルの36階にあるレストランでディナー！コースだから、お腹を空かせておこう！",
+      riddle: "紙とカメ",
+      answer: "ハニー",
+      hint: "ヒント：数字を他の文字で表してみよう！",
+      image: "riddle3.png",
     },
     {
       time: "21:00 ~ ",
       plan: "夜景を見ながらお酒を嗜もう！",
       detail: "WIP",
-      riddle: "Q4",
-      answer: "Answer",
-      hint: "ヒント：Hint",
-    },
-    {
-      time: "23:00 ~ ",
-      plan: "WIP",
-      detail: "WIP",
-      riddle: "Q5",
-      answer: "Answer",
-      hint: "ヒント：Hint",
+      riddle: "正方形",
+      answer: "スクエア",
+      hint: "ヒント：4文字のカタカナだよ！",
+      image: "riddle9.png",
     },
   ],
   Day2: [
     {
       time: "~ 9:30",
-      plan: "ホテルで朝食ビュッフェを食べるよ！",
-      detail: "WIP",
-      riddle: "テスト",
-      answer: "Answer",
-      hint: "ヒント：",
+      plan: "ホテルで朝食を食べるよ！",
+      detail: "10時半までだから、遅れないように！！",
+      riddle: "日本",
+      answer: "冒険",
+      hint: "ヒント：簡単だから無し！",
+      image: "riddle6.png",
     },
     {
       time: "~ 11:00",
       plan: "チェックアウトしよう！",
-      detail: "WIP",
-      riddle: "テスト",
-      answer: "Answer",
-      hint: "ヒント：",
+      detail: "11時までにチェックアウトだから、遅れないように！！！！",
+      riddle: "トランプ",
+      answer: "クッキー",
+      hint: "よく見ると、小さいカードがあるね。",
+      image: "riddle7.png",
     },
     {
       time: "13:00 ~ 13:30",
       plan: "チームラボに行くよ！！",
-      detail: "WIP",
-      riddle: "テスト",
-      answer: "Answer",
-      hint: "ヒント：",
+      detail:
+        "行ったこと無いって言ってたよね？？俺も行ってみたかったから楽しみ！！",
+      riddle: "1つのループ、つまり始点と終点が同じになるようにしよう！",
+      answer: "CHAIN",
+      hint: "ヒント：このマスの中で作れるアルファベットは限られているよ。",
+      image: "riddle8.png",
+    },
+    {
+      time: "16:00 ~ ",
+      plan: "オリジナルチョコバナナを食べに行こう！",
+      detail: "ほのかが教えてくれたやつ、食べたくて仕方なかった。",
+      riddle: "ABC",
+      answer: "CUBE",
+      hint: "ヒント：A->B->C はアルファベットの順、A->I->U は？",
+      image: "riddle5.png",
+    },
+    {
+      time: "16:30 ~ ",
+      plan: "原宿近辺で自由時間！",
+      detail:
+        "ちいかわランド、ゲームセンター、カフェ、などなど！！原宿のちいかわランドがリニューアルしたよ。ゲームセンターでは良いことがあるかも？",
+      riddle: "「？」に入る言葉は？",
+      answer: "タイマー",
+      hint: "ヒント：男の人に注目！",
+      image: "riddle10.png",
     },
   ],
 };
@@ -91,7 +120,7 @@ const DetailModal = ({ isOpen, onClose, scheduleItem }) => {
         className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-lg transform transition-all duration-300 scale-100 border-4 border-pink-400"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-xl font-black mb-4 text-pink-600 flex items-center border-b pb-2">
+        <h3 className="text-2xl font-black mb-4 text-pink-600 flex items-center border-b pb-2">
           {/* ここを ICON_SIZE に固定 */}
           <Gift className={`${ICON_SIZE} mr-2 text-pink-500 flex-shrink-0`} />
           {scheduleItem.plan}
@@ -142,15 +171,15 @@ const RiddleModal = ({
       .trim();
 
     if (normalizedInput === normalizedCorrectAnswer) {
-      setMessage("🎊正解です！次の予定がアンロックされました！🎊");
+      setMessage("🎊正解！！！さすがほのか！！！天才！！！🎊");
       setIsError(false);
 
       // 成功時は親のコールバックを呼び出し、謎解きモーダルを閉じ、詳細モーダルを開かせる
       setTimeout(() => {
         onSolveAndOpenDetail();
-      }, 1500);
+      }, 3000);
     } else {
-      setMessage("残念、答えが違います。ヒントをよく見て考えてみてね！");
+      setMessage("残念！ヒントをよく見て考えてみてね！");
       setIsError(true);
       setTimeout(() => {
         setMessage("");
@@ -173,6 +202,22 @@ const RiddleModal = ({
           <Lock className={`${ICON_SIZE} mr-2 flex-shrink-0`} />{" "}
           謎解きチャレンジ！
         </h3>
+
+        {scheduleItem.image && (
+          <div className="mb-4 rounded-xl overflow-hidden shadow-md">
+            <img
+              src={`/${scheduleItem.image}`}
+              alt="謎解きのヒント画像"
+              className="w-full h-auto object-cover border-2 border-pink-100"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src =
+                  "https://placehold.co/400x200/F472B6/ffffff?text=Image+Not+Found"; // エラー時のフォールバック
+              }}
+            />
+          </div>
+        )}
+
         <p className="mb-4 text-gray-700 font-medium whitespace-pre-wrap">
           {scheduleItem.riddle}
         </p>
@@ -200,7 +245,7 @@ const RiddleModal = ({
           onClick={checkAnswer}
           className="w-full bg-pink-500 text-white font-bold py-3 rounded-xl hover:bg-pink-600 transition-all duration-200 shadow-lg hover:shadow-xl active:scale-98 mb-3"
         >
-          答えをチェック！
+          答えを送信！
         </button>
 
         {message && (
@@ -292,7 +337,7 @@ const ScheduleRow = ({
         <span className="text-lg">{item.time}</span>
         {!isRevealed && (
           <span className="text-[10px] text-red-600 font-bold mt-1 animate-pulse">
-            2秒長押しでスキップ！
+            長押しでスキップ！
           </span>
         )}
       </div>
@@ -316,6 +361,7 @@ const ScheduleRow = ({
             <span className="font-extrabold text-md text-pink-800">
               {item.plan}
             </span>
+            <span className="text-xs text-gray-500 ml-2">(タップで詳細)</span>
           </div>
         ) : (
           // 謎解きが必要な場合
@@ -419,36 +465,44 @@ export default function App() {
         rel="stylesheet"
       />
 
-      <meta name="robots" content="noindex" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+      {/* ★ デコレーション用カスタムスタイル */}
       <style>{`
         body { font-family: 'Inter', sans-serif; }
         .schedule-container {
             width: 100%;
             max-width: 600px;
         }
+        .animate-sparkle {
+            animation: sparkle 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes sparkle {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.05); opacity: 1; }
+        }
       `}</style>
+
+      <meta name="robots" content="noindex" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
       {/* ヘッダー */}
       <header className="w-full max-w-md text-center py-6">
-        <h1 className="text-3xl font-black text-pink-700 mb-1 animate-pulse">
+        <h1 className="text-3xl font-black mb-1 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-500 animate-sparkle">
           💖 Happy Birthday! 💖
         </h1>
-        <p className="text-md text-gray-600 font-semibold mt-4">
+        <p className="text-lg text-gray-700 font-bold mt-4">
           2日間のスケジュールを知りたい？？
           <br />
-          知りたいなら、謎が解けたら教えてあげる！
+          謎が解けたら教えてあげる！
         </p>
       </header>
 
       {/* デイ切り替えボタン */}
-      <div className="w-full max-w-sm flex justify-center space-x-4 mb-6 p-1 bg-white rounded-xl shadow-lg">
+      <div className="w-full max-w-sm flex justify-center space-x-4 mb-6 p-1 bg-white rounded-xl shadow-xl">
         <button
           onClick={() => setSelectedDay("Day1")}
           className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 text-lg w-1/2 ${
             selectedDay === "Day1"
-              ? "bg-pink-500 text-white shadow-md"
+              ? "bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg transform scale-105"
               : "bg-white text-pink-500 hover:bg-pink-100"
           }`}
         >
@@ -458,7 +512,7 @@ export default function App() {
           onClick={() => setSelectedDay("Day2")}
           className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 text-lg w-1/2 ${
             selectedDay === "Day2"
-              ? "bg-pink-500 text-white shadow-md"
+              ? "bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg transform scale-105"
               : "bg-white text-pink-500 hover:bg-pink-100"
           }`}
         >
@@ -467,9 +521,9 @@ export default function App() {
       </div>
 
       {/* 注意事項/ざっくり情報エリア (bg-whiteは残しつつ、縁を削除) */}
-      <div className="w-full max-w-md bg-white p-4 mb-6 rounded-2xl">
+      <div className="w-full max-w-md bg-white p-4 mb-6 rounded-2xl shadow-inner border border-pink-100">
         <h2 className="text-xl font-extrabold text-pink-700 flex items-center mb-2">
-          <Info className="w-5 h-5 mr-2 flex-shrink-0" />
+          <Info className="w-5 h-5 mr-2 flex-shrink-0 text-pink-500" />
           {selectedDay} の 概要と注意点！
         </h2>
         <p className="text-sm text-gray-600 mt-3 whitespace-pre-wrap">
@@ -483,7 +537,7 @@ export default function App() {
       {/* スケジュール表示エリア */}
       <main className="schedule-container bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-pink-300">
         {/* テーブルヘッダー */}
-        <div className="flex bg-pink-600 text-white font-extrabold text-lg">
+        <div className="flex bg-gradient-to-r from-pink-600 to-red-500 text-white font-extrabold text-lg">
           <div className="w-1/3 p-4 text-center">時間</div>
           <div className="w-2/3 p-4 text-center border-l border-pink-400">
             ドキドキ予定内容
