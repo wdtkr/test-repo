@@ -29,10 +29,10 @@ const scheduleData = {
       plan: "お台場デート！",
       detail:
         "お台場海浜公園、カフェ、ダイバーシティ東京、台場一丁目商店街、などなど！カフェはいくつかメモしてあるから、良い感じなところ探そ！",
-      riddle: "お花見",
-      answer: "ひる",
-      hint: "ヒント：数字は漢字の何かを表しているよ。",
-      image: "riddle1.png",
+      riddle: "反泉未？",
+      answer: "かんじ",
+      hint: "ヒント：同じ色で、右と左に分かれているみたい。",
+      image: "riddle13.png",
     },
     {
       time: "18:00 ~ ",
