@@ -8,18 +8,29 @@ const scheduleData = {
     {
       time: "0:00 ~ ",
       plan: "Happy Birthday ほのか！！！",
-      detail: "ケーキを食べたり、プレゼントを渡したりするよ！",
-      riddle: "た",
-      answer: "記憶",
-      hint: "ヒント：「た」が手前にあるなら・・・？",
-      image: "riddle4.png",
+      detail:
+        "お誕生日おめでとう！！ケーキを食べたり、プレゼントを渡したりするよ！",
+      riddle: "秋",
+      answer: "とうじ",
+      hint: "ヒント：「いつか」っていつだ？",
+      image: "riddle11.png",
     },
     {
       time: "12:00 ~ ",
       plan: "家を出る",
       detail: "12時くらいに家を出るよ！次の目的地に向かってレッツゴー！",
       riddle: "お花見",
-      answer: "ヒル",
+      answer: "ひる",
+      hint: "ヒント：数字は漢字の何かを表しているよ。",
+      image: "riddle1.png",
+    },
+    {
+      time: "13:00 ~ ",
+      plan: "お台場デート！",
+      detail:
+        "お台場海浜公園、カフェ、ダイバーシティ東京、台場一丁目商店街、などなど！カフェはいくつかメモしてあるから、良い感じなところ探そ！",
+      riddle: "お花見",
+      answer: "ひる",
       hint: "ヒント：数字は漢字の何かを表しているよ。",
       image: "riddle1.png",
     },
@@ -72,10 +83,10 @@ const scheduleData = {
       image: "riddle7.png",
     },
     {
-      time: "13:00 ~ 13:30",
+      time: "13:00 ~ ",
       plan: "チームラボに行くよ！！",
       detail:
-        "行ったこと無いって言ってたよね？？俺も行ってみたかったから楽しみ！！",
+        "行ったこと無いって言ってたよね？？俺も行ってみたかったから楽しみ！！13時から13時半に入場！！",
       riddle: "1つのループ、つまり始点と終点が同じになるようにしよう！",
       answer: "CHAIN",
       hint: "ヒント：このマスの中で作れるアルファベットは限られているよ。",
@@ -99,6 +110,16 @@ const scheduleData = {
       answer: "タイマー",
       hint: "ヒント：男の人に注目！",
       image: "riddle10.png",
+    },
+    {
+      time: "20:00 ~ ",
+      plan: "今日は泊まっちゃいなよ〜",
+      detail:
+        "明日も休みなら、帰るの明日でいいよ！ゆっくりしていきな！・・・別に寂しいからバイバイしたくない訳じゃないけど😢",
+      riddle: "健の家にある、？の部分のフィギュアは何？",
+      answer: "カバ",
+      hint: "ヒント：一緒にガチャガチャしたね",
+      image: "riddle12.png",
     },
   ],
 };
@@ -320,7 +341,6 @@ const ScheduleRow = ({
 
   return (
     <div className="flex border-b border-pink-200 last:border-b-0">
-      {/* 時間列 (長押しでスキップ) */}
       <div
         className={`w-1/3 p-3 font-semibold flex flex-col items-center justify-center border-r border-pink-200 relative select-none transition-colors ${
           isRevealed
@@ -334,12 +354,7 @@ const ScheduleRow = ({
         onTouchEnd={handlePressEnd}
         onMouseLeave={handlePressEnd} // マウスがエリアを離れた場合もリセット
       >
-        <span className="text-lg">{item.time}</span>
-        {!isRevealed && (
-          <span className="text-[10px] text-red-600 font-bold mt-1 animate-pulse">
-            長押しでスキップ！
-          </span>
-        )}
+        <span className="text-xl animate-pulse">{item.time}</span>
       </div>
 
       {/* 予定内容列 (謎解きエリア/詳細表示エリア) */}
@@ -361,10 +376,8 @@ const ScheduleRow = ({
             <span className="font-extrabold text-md text-pink-800">
               {item.plan}
             </span>
-            <span className="text-xs text-gray-500 ml-2">(タップで詳細)</span>
           </div>
         ) : (
-          // 謎解きが必要な場合
           <div className="text-white font-bold text-md flex items-center justify-center w-full py-2">
             <Lock className={`${ICON_SIZE} mr-2 flex-shrink-0`} />
             タップして謎解きへ！
@@ -457,7 +470,7 @@ export default function App() {
   // Dayごとの概要情報
   const daySummaries = {
     Day1: "1日目はゆったり、大人な雰囲気！ちょっとオシャレなところに行くから、服装はカジュアルすぎないように注意！",
-    Day2: "2日目は色んなところにお出かけ！出来るだけ歩きやすい靴を履いて、短いスカートは避けた方が良いよ！",
+    Day2: "2日目は色んなところにお出かけ！短いスカートだけは避けた方が良いよ！！！！",
   };
 
   return (
